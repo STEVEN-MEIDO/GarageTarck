@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.AccountPage"
+             x:DataType="vm:AccountViewModel"
+             Title="Compte">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,24,20,32" Spacing="18">
+            <VerticalStackLayout>
+                <Label Text="MON ATELIER" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource Primary}" CharacterSpacing="0.4" />
+                <Label Text="Compte" Style="{StaticResource H1}" Margin="0,6,0,0" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                    <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" StrokeShape="Ellipse"
+                            WidthRequest="70" HeightRequest="70">
+                        <Label Text="{Binding Initials}" FontFamily="InterBold" FontSize="24" TextColor="White"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="{Binding FullName}" FontFamily="InterBold" FontSize="21" />
+                        <Label Text="Gérant · administrateur" Style="{StaticResource Subtitle}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout>
+                    <Label Text="Coordonnées" Style="{StaticResource H2}" Margin="0,0,0,4" />
+                    <Label Text="Adresse email" Style="{StaticResource Caption}" Margin="0,12,0,4" />
+                    <Label Text="{Binding Email}" Style="{StaticResource Value}" />
+                    <Label Text="Téléphone" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                    <Label Text="{Binding Phone}" Style="{StaticResource Value}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout>
+                    <Label Text="Atelier" Style="{StaticResource H2}" Margin="0,0,0,4" />
+                    <Label Text="Nom du garage" Style="{StaticResource Caption}" Margin="0,12,0,4" />
+                    <Label Text="{Binding GarageName}" Style="{StaticResource Value}" />
+                    <Label Text="Adresse" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                    <Label Text="{Binding GarageAddress}" Style="{StaticResource Value}" />
+                    <Label Text="Mécaniciens" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                    <Label Text="{Binding MechanicsText}" Style="{StaticResource Value}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <controls:ActionButton Kind="Secondary" Text="Se déconnecter" Glyph="{x:Static helpers:Icons.LogOut}"
+                                   Command="{Binding LogoutCommand}" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                <controls:Icon Glyph="{x:Static helpers:Icons.ShieldCheck}" Color="{StaticResource Muted}" Size="18" />
+                <Label Text="Vos données d’atelier restent confidentielles." Style="{StaticResource Caption}" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

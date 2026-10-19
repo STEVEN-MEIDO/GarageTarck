@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.ClientsPage"
+             x:DataType="vm:ClientsViewModel"
+             Title="Clients">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,24,20,32">
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
+                    <Label Text="FICHIER CLIENTS" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource Primary}" CharacterSpacing="0.4" />
+                    <Label Text="Clients" Style="{StaticResource H1}" Margin="0,6,0,0" />
+                    <Label Text="{Binding CountText}" Style="{StaticResource Subtitle}" Margin="0,6,0,0" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1" BackgroundColor="{StaticResource Accent}" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                        WidthRequest="56" HeightRequest="56" VerticalOptions="Start" Margin="0,8,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.Plus}" Color="White" Size="26" />
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddClientCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource Field}" Margin="0,24,0,20" Padding="16,0,8,0">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.Search}" Color="{StaticResource Muted}" Size="22" />
+                    <Entry Grid.Column="1" Text="{Binding SearchText}" Placeholder="Nom du client ou immatriculation"
+                           ClearButtonVisibility="WhileEditing" />
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Rows}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ClientRow">
+                        <Border Style="{StaticResource Card}" Padding="16">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                                <Border BackgroundColor="{StaticResource PrimarySoft}" StrokeThickness="0" StrokeShape="Ellipse"
+                                        WidthRequest="52" HeightRequest="52" VerticalOptions="Center">
+                                    <Label Text="{Binding Client.Initials}" FontFamily="InterBold" FontSize="18"
+                                           TextColor="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                    <Label Text="{Binding Client.FullName}" FontFamily="InterSemiBold" FontSize="16" />
+                                    <controls:LicensePlate Plate="{Binding Plate}" IsVisible="{Binding HasVehicle}" />
+                                    <Label Text="{Binding VehicleLine}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                                <controls:Icon Grid.Column="2" Glyph="{x:Static helpers:Icons.ChevronRight}" Color="{StaticResource Muted}" Size="22" />
+                            </Grid>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRowTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty}" Padding="24">
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.Users}" Color="{StaticResource Muted}" Size="28" />
+                    <Label Text="Aucun résultat" FontFamily="InterSemiBold" HorizontalTextAlignment="Center" />
+                    <Label Text="Vérifiez la plaque ou créez un client avec le bouton +." Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,40,24,32" Spacing="0">
+
+            <!-- Logo -->
+            <HorizontalStackLayout Spacing="16">
+                <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14" WidthRequest="64" HeightRequest="64">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.Wrench}" Color="White" Size="30" />
+                </Border>
+                <VerticalStackLayout VerticalOptions="Center" Spacing="0">
+                    <Label Text="GarageTrack" FontFamily="InterBold" FontSize="30" TextColor="{StaticResource Primary}" />
+                    <Label Text="AUTOMOBILE" Style="{StaticResource Overline}" Margin="2,-2,0,0" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <!-- Bandeau -->
+            <Border Style="{StaticResource HeroCard}" Margin="0,28,0,0" Padding="24,24,24,22">
+                <Grid RowDefinitions="Auto,Auto,Auto">
+                    <Label Text="VOTRE ATELIER, SOUS CONTRÔLE" FontFamily="InterSemiBold" FontSize="12"
+                           TextColor="#F5C2CF" CharacterSpacing="0.4" />
+                    <Label Grid.Row="1" Margin="0,14,0,0" LineHeight="1.15"
+                           Text="Moins de paperasse.&#10;Plus de mécanique."
+                           FontFamily="InterBold" FontSize="28" TextColor="White" />
+                    <Grid Grid.Row="2" Margin="0,30,0,0" ColumnDefinitions="*,Auto">
+                        <BoxView Color="{StaticResource Accent}" WidthRequest="48" HeightRequest="4"
+                                 CornerRadius="2" HorizontalOptions="Start" VerticalOptions="End" />
+                        <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.Car}"
+                                       Color="#EFA3B6" Size="64" Thickness="0.8" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Titre -->
+            <Label Text="Bienvenue à l’atelier" Style="{StaticResource H1}" Margin="0,32,0,0" />
+            <Label Text="Connectez-vous pour retrouver vos OR, vos devis et vos clients."
+                   Style="{StaticResource Subtitle}" Margin="0,10,0,0" />
+
+            <!-- Email -->
+            <Label Text="Adresse email" Style="{StaticResource FieldLabel}" Margin="0,24,0,8" />
+            <Border Style="{StaticResource Field}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry Text="{Binding Email}" Keyboard="Email" Placeholder="nom@gmail.com" />
+                    <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.Mail}"
+                                   Color="{StaticResource Muted}" Size="22" />
+                </Grid>
+            </Border>
+
+            <!-- Mot de passe -->
+            <Label Text="Mot de passe" Style="{StaticResource FieldLabel}" />
+            <Border Style="{StaticResource Field}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry Text="{Binding Password}" IsPassword="{Binding IsPasswordHidden}"
+                           Placeholder="Votre mot de passe" ReturnCommand="{Binding LoginCommand}" />
+                    <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44" Margin="0,0,-10,0">
+                        <controls:Icon Glyph="{Binding PasswordGlyph}" Color="{StaticResource Muted}" Size="22" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TogglePasswordCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource ErrorText}" FontSize="13"
+                   Margin="0,8,0,0" IsVisible="{Binding ErrorMessage, Converter={StaticResource NotEmpty}}" />
+
+            <Label Text="Mot de passe oublié ?" Style="{StaticResource Link}"
+                   HorizontalOptions="End" Margin="0,22,0,0" Padding="0,6">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <controls:ActionButton Text="Se connecter" Glyph="{x:Static helpers:Icons.ArrowRight}"
+                                   Command="{Binding LoginCommand}" Margin="0,24,0,0" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6" Margin="0,28,0,0">
+                <Label Text="Nouveau sur GarageTrack ?" Style="{StaticResource Subtitle}" />
+                <Label Text="S’inscrire" Style="{StaticResource Link}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding RegisterCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="8" Margin="0,32,0,0">
+                <controls:Icon Glyph="{x:Static helpers:Icons.ShieldCheck}" Color="{StaticResource Muted}" Size="18" />
+                <Label Text="Vos données d’atelier restent confidentielles." Style="{StaticResource Caption}" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

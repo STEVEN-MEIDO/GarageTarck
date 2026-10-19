@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:models="clr-namespace:GarageTrack.Models"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.PartsLaborPage"
+             x:DataType="vm:PartsLaborViewModel"
+             Shell.TabBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <!-- Ligne du tableau (pièce ou prestation) : touchez-la pour modifier la quantité -->
+        <DataTemplate x:Key="LineTemplate" x:DataType="models:QuoteLine">
+            <VerticalStackLayout>
+                <Grid ColumnDefinitions="*,32,96,104" Padding="0,16" ColumnSpacing="4">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="15" />
+                        <Label Text="{Binding SubLine}" Style="{StaticResource Caption}" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="{Binding QuantityText}" HorizontalOptions="End" VerticalOptions="Start" />
+                    <Label Grid.Column="2" Text="{Binding UnitPriceText}" FontSize="13" LineBreakMode="NoWrap" HorizontalOptions="End" VerticalOptions="Start" />
+                    <Label Grid.Column="3" Text="{Binding TotalText}" FontFamily="InterBold" FontSize="13" LineBreakMode="NoWrap" HorizontalOptions="End" VerticalOptions="Start" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLineTapped" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <BoxView Style="{StaticResource Divider}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,32">
+
+            <!-- En-tête -->
+            <Grid ColumnDefinitions="Auto,*" HeightRequest="48">
+                <Grid WidthRequest="44" HeightRequest="44" Margin="-10,0,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ArrowLeft}" Color="{StaticResource Primary}" Size="24" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Label Grid.Column="1" Text="INTERVENTION · 2 / 3" Style="{StaticResource Overline}"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Text="Pièces &amp; main-d’œuvre" Style="{StaticResource H1}" Margin="0,14,0,0" />
+            <Label Text="{Binding Header}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+            <controls:StepProgress CurrentStep="2" Margin="0,20,0,0" />
+
+            <Grid ColumnDefinitions="*,Auto" Margin="0,20,0,0">
+                <controls:LicensePlate Plate="{Binding Plate}" />
+                <controls:StatusBadge Grid.Column="1" Status="QuoteInProgress" />
+            </Grid>
+
+            <!-- Pièces -->
+            <Border Style="{StaticResource Card}" Margin="0,20,0,0">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,18">
+                        <Label Text="Pièces" Style="{StaticResource H2}" />
+                        <Label Grid.Column="1" Text="{Binding PartsCount}" Style="{StaticResource Link}" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,32,96,104" ColumnSpacing="4" BackgroundColor="{StaticResource TableHeader}" Padding="8,12" Margin="-8,0">
+                        <Label Text="PIÈCE / RÉF." Style="{StaticResource TableHead}" />
+                        <Label Grid.Column="1" Text="QTÉ" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                        <Label Grid.Column="2" Text="PU HT" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                        <Label Grid.Column="3" Text="TOTAL HT" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                    </Grid>
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Parts}"
+                                         BindableLayout.ItemTemplate="{StaticResource LineTemplate}" />
+                    <controls:ActionButton Kind="Secondary" Text="Ajouter une pièce" Glyph="{x:Static helpers:Icons.Plus}"
+                                           Command="{Binding AddPartCommand}" Margin="0,16,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Main-d'œuvre -->
+            <Border Style="{StaticResource Card}" Margin="0,20,0,0">
+                <VerticalStackLayout>
+                    <Label Text="Main-d’œuvre" Style="{StaticResource H2}" Margin="0,4,0,18" />
+                    <Grid ColumnDefinitions="*,32,96,104" ColumnSpacing="4" BackgroundColor="{StaticResource TableHeader}" Padding="8,12" Margin="-8,0">
+                        <Label Text="PRESTATION" Style="{StaticResource TableHead}" />
+                        <Label Grid.Column="1" Text="H" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                        <Label Grid.Column="2" Text="TAUX HT" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                        <Label Grid.Column="3" Text="TOTAL HT" Style="{StaticResource TableHead}" HorizontalOptions="End" />
+                    </Grid>
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Labor}"
+                                         BindableLayout.ItemTemplate="{StaticResource LineTemplate}" />
+                    <controls:ActionButton Kind="Secondary" Text="Ajouter une prestation" Glyph="{x:Static helpers:Icons.Plus}"
+                                           Command="{Binding AddLaborCommand}" Margin="0,16,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout Spacing="8" Margin="0,18,0,0">
+                <controls:Icon Glyph="{x:Static helpers:Icons.Calculator}" Color="{StaticResource Muted}" Size="18" />
+                <Label Text="Montants recalculés automatiquement · TVA 19,25 %" Style="{StaticResource Caption}" />
+            </HorizontalStackLayout>
+            <Label Text="Touchez une ligne pour modifier sa quantité." Style="{StaticResource Caption}" FontSize="12" Margin="26,4,0,0" />
+
+            <!-- Totaux -->
+            <Border Style="{StaticResource Card}" Margin="0,16,0,0">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="12">
+                    <Label Text="Total HT" FontSize="17" TextColor="{StaticResource Muted}" />
+                    <Label Grid.Column="1" Text="{Binding TotalHt}" FontFamily="InterSemiBold" FontSize="17" />
+                    <Label Grid.Row="1" Text="TVA · 19,25 %" FontSize="17" TextColor="{StaticResource Muted}" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Vat}" FontFamily="InterSemiBold" FontSize="17" />
+                    <BoxView Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource Divider}" />
+                    <Label Grid.Row="3" Text="Total TTC" FontFamily="InterBold" FontSize="18" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding TotalTtc}" FontFamily="InterBold" FontSize="40" TextColor="{StaticResource Primary}" />
+                </Grid>
+            </Border>
+
+            <controls:ActionButton Text="Continuer vers la validation" Glyph="{x:Static helpers:Icons.ArrowRight}"
+                                   Command="{Binding ContinueCommand}" Margin="0,24,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

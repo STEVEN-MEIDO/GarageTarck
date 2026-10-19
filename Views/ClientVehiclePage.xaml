@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.ClientVehiclePage"
+             x:DataType="vm:ClientVehicleViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,32">
+
+            <!-- En-tête -->
+            <Grid ColumnDefinitions="Auto,*" HeightRequest="48">
+                <Grid WidthRequest="44" HeightRequest="44" Margin="-10,0,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ArrowLeft}" Color="{StaticResource Primary}" Size="24" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Label Grid.Column="1" Text="DOSSIER CLIENT" Style="{StaticResource Overline}"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Text="Client &amp; véhicule" Style="{StaticResource H1}" Margin="0,14,0,0" />
+            <Label Text="{Binding Subtitle}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+
+            <!-- Onglets Client / Véhicule -->
+            <Border BackgroundColor="{StaticResource Segment}" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="5" Margin="0,22,0,0">
+                <Grid ColumnDefinitions="*,*" HeightRequest="66">
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsClientTab}" Value="True">
+                                <Setter Property="BackgroundColor" Value="White" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Label Text="Client" FontFamily="InterSemiBold" FontSize="17" TextColor="{StaticResource Muted}"
+                               HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsClientTab}" Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowClientTabCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="1" BackgroundColor="Transparent" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsVehicleTab}" Value="True">
+                                <Setter Property="BackgroundColor" Value="White" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Label Text="Véhicule" FontFamily="InterSemiBold" FontSize="17" TextColor="{StaticResource Muted}"
+                               HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsVehicleTab}" Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowVehicleTabCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ================= ONGLET CLIENT ================= -->
+            <VerticalStackLayout IsVisible="{Binding IsClientTab}" Spacing="18" Margin="0,20,0,0">
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                            <Border BackgroundColor="{StaticResource PrimarySoft}" StrokeThickness="0"
+                                    StrokeShape="Ellipse" WidthRequest="78" HeightRequest="78" VerticalOptions="Start">
+                                <Label Text="{Binding Client.Initials}" FontFamily="InterBold" FontSize="26"
+                                       TextColor="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="6">
+                                <Label Text="{Binding Client.FullName}" FontFamily="InterBold" FontSize="24" />
+                                <Label Text="{Binding Client.SinceLongText}" Style="{StaticResource Subtitle}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border BackgroundColor="{StaticResource SuccessSoft}" StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                Padding="10,6" HorizontalOptions="Start" IsVisible="{Binding Client.IsVerified}">
+                            <HorizontalStackLayout Spacing="8">
+                                <Ellipse Fill="#10B981" WidthRequest="6" HeightRequest="6" VerticalOptions="Center" />
+                                <Label Text="Coordonnées vérifiées" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource SuccessText}" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                            <Label Text="Coordonnées" Style="{StaticResource H2}" />
+                            <Label Grid.Column="1" Text="Modifier" Style="{StaticResource Link}" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditClientCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                        <Label Text="Téléphone mobile" Style="{StaticResource Caption}" Margin="0,12,0,4" />
+                        <Label Text="{Binding Client.Phone}" Style="{StaticResource Value}" />
+                        <Label Text="Adresse email" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                        <Label Text="{Binding Client.Email}" Style="{StaticResource Value}" />
+                        <Label Text="Adresse de facturation" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                        <Label Text="{Binding Client.FullAddress}" Style="{StaticResource Value}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <controls:ActionButton Kind="Secondary" Text="Appeler" Glyph="{x:Static helpers:Icons.Phone}"
+                                           Command="{Binding CallCommand}" />
+                    <controls:ActionButton Grid.Column="1" Kind="Secondary" Text="Envoyer un email"
+                                           Glyph="{x:Static helpers:Icons.Mail}" Command="{Binding SendEmailCommand}" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                    <Label Text="Véhicule associé" Style="{StaticResource H2}" />
+                    <Label Grid.Column="1" Text="Voir la fiche" Style="{StaticResource Link}" VerticalOptions="Center"
+                           IsVisible="{Binding HasVehicle}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowVehicleTabCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <Border Style="{StaticResource Card}" Padding="20,16" IsVisible="{Binding HasVehicle}">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="12">
+                        <controls:LicensePlate Plate="{Binding Vehicle.Plate}" />
+                        <Label Grid.Row="1" Text="{Binding AssociatedVehicleLine}" FontFamily="InterSemiBold" FontSize="16" />
+                        <controls:Icon Grid.Column="1" Grid.RowSpan="2" Glyph="{x:Static helpers:Icons.ChevronRight}"
+                                       Color="{StaticResource Primary}" Size="22" />
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowVehicleTabCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasVehicle, Converter={StaticResource Not}}">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <controls:Icon Glyph="{x:Static helpers:Icons.Car}" Color="{StaticResource Muted}" Size="28" />
+                        <Label Text="Aucun véhicule associé" FontFamily="InterSemiBold" HorizontalTextAlignment="Center" />
+                        <Label Text="Associez un véhicule à ce client." Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource SoftCard}" IsVisible="{Binding HasVehicle}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                        <controls:Icon Glyph="{x:Static helpers:Icons.History}" Color="{StaticResource Primary}" Size="26" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Historique du véhicule" FontFamily="InterSemiBold" FontSize="17" TextColor="{StaticResource Primary}" />
+                            <Label Text="{Binding HistorySummary}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <controls:Icon Grid.Column="2" Glyph="{x:Static helpers:Icons.ChevronRight}" Color="{StaticResource Primary}" Size="22" />
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenHistoryCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- ================= ONGLET VÉHICULE ================= -->
+            <VerticalStackLayout IsVisible="{Binding IsVehicleTab}" Spacing="18" Margin="0,20,0,0">
+
+                <Border Style="{StaticResource HeroCard}" Padding="20,24">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="{Binding VehicleOwnerTitle}" FontSize="14" TextColor="#F5C2CF"
+                               HorizontalOptions="Center" CharacterSpacing="0.3" />
+                        <controls:LicensePlate IsLarge="True" HorizontalOptions="Center"
+                                               Plate="{Binding Vehicle.Plate}" />
+                        <Label Text="{Binding Vehicle.NameWithEngine}" FontFamily="InterSemiBold" FontSize="21"
+                               TextColor="White" HorizontalOptions="Center" />
+                        <Label Text="{Binding Vehicle.Specs}" FontSize="15" TextColor="#FBE0E7" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Données du véhicule" Style="{StaticResource H2}" />
+                            <Label Grid.Column="1" Text="Modifier" Style="{StaticResource Link}" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditVehicleCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Margin="0,22,0,0">
+                            <controls:Icon Glyph="{x:Static helpers:Icons.Gauge}" Color="{StaticResource Primary}" Size="28" VerticalOptions="End" />
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="Kilométrage actuel" Style="{StaticResource Caption}" />
+                                <Label Text="{Binding MileageText}" FontFamily="InterBold" FontSize="30" TextColor="{StaticResource Primary}" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <BoxView Style="{StaticResource Divider}" Margin="0,18" />
+
+                        <Label Text="Numéro de série · VIN" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                        <Label Text="{Binding Vehicle.Vin}" Style="{StaticResource Value}" />
+                        <Label Text="Première mise en circulation" Style="{StaticResource Caption}" Margin="0,16,0,4" />
+                        <Label Text="{Binding FirstRegistrationText}" Style="{StaticResource Value}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource SoftCard}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                        <controls:Icon Glyph="{x:Static helpers:Icons.History}" Color="{StaticResource Primary}" Size="26" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Historique du véhicule" FontFamily="InterSemiBold" FontSize="17" TextColor="{StaticResource Primary}" />
+                            <Label Text="{Binding HistorySummary}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <controls:Icon Grid.Column="2" Glyph="{x:Static helpers:Icons.ChevronRight}" Color="{StaticResource Primary}" Size="22" />
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenHistoryCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <!-- OR en cours -->
+                <Border Style="{StaticResource Card}" Padding="20,18" IsVisible="{Binding HasCurrentOrder}">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding CurrentOrder.Number}" FontFamily="InterSemiBold" FontSize="16" VerticalOptions="Center" />
+                            <controls:StatusBadge Grid.Column="1" Status="{Binding CurrentOrder.Status}" />
+                        </Grid>
+                        <Label Text="{Binding CurrentOrder.TitleAndMechanic}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+                        <Label Text="{Binding CurrentOrder.ReceivedText}" Style="{StaticResource Subtitle}" />
+                    </VerticalStackLayout>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenCurrentOrderCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <controls:ActionButton Text="Créer un ordre de réparation" Glyph="{x:Static helpers:Icons.Plus}"
+                                       Command="{Binding CreateOrderCommand}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

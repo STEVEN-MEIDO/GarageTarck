@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:models="clr-namespace:GarageTrack.Models"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.QuotesPage"
+             x:DataType="vm:QuotesViewModel"
+             Title="Devis">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,24,20,32">
+            <Label Text="CHIFFRAGE" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource Primary}" CharacterSpacing="0.4" />
+            <Label Text="Devis" Style="{StaticResource H1}" Margin="0,6,0,0" />
+            <Label Text="Préparez, faites signer et suivez vos devis." Style="{StaticResource Subtitle}" Margin="0,6,0,24" />
+
+            <VerticalStackLayout Spacing="14" BindableLayout.ItemsSource="{Binding Quotes}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:RepairOrder">
+                        <Border Style="{StaticResource Card}" Padding="18,16">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+                                <Label Text="{Binding QuoteNumber}" FontFamily="InterBold" FontSize="16" VerticalOptions="Center" />
+                                <controls:StatusBadge Grid.Column="1" Status="{Binding Status}" />
+                                <controls:LicensePlate Grid.Row="1" Plate="{Binding Vehicle.Plate}" Margin="0,8,0,6" />
+                                <Label Grid.Row="2" Text="{Binding VehicleAndClient}" FontFamily="InterSemiBold" />
+                                <Label Grid.Row="3" Text="{Binding Number}" Style="{StaticResource Caption}" />
+                                <Label Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Text="{Binding TotalTtcText}"
+                                       FontFamily="InterBold" FontSize="18" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                            </Grid>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnQuoteTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty}" Padding="24">
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.FileText}" Color="{StaticResource Muted}" Size="28" />
+                    <Label Text="Devis non chiffré" FontFamily="InterSemiBold" HorizontalTextAlignment="Center" />
+                    <Label Text="Créez un OR puis ajoutez des pièces et de la main-d’œuvre." Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

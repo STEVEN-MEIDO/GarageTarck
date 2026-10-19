@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:models="clr-namespace:GarageTrack.Models"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.QuoteValidationPage"
+             x:DataType="vm:QuoteValidationViewModel"
+             Shell.TabBarIsVisible="False">
+
+    <ScrollView x:Name="Scroller">
+        <VerticalStackLayout Padding="20,20,20,32">
+
+            <!-- En-tête -->
+            <Grid ColumnDefinitions="Auto,*" HeightRequest="48">
+                <Grid WidthRequest="44" HeightRequest="44" Margin="-10,0,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ArrowLeft}" Color="{StaticResource Primary}" Size="24" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Label Grid.Column="1" Text="INTERVENTION · 3 / 3" Style="{StaticResource Overline}"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Text="Validation du devis" Style="{StaticResource H1}" Margin="0,14,0,0" />
+            <Label Text="{Binding Header}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+            <controls:StepProgress CurrentStep="3" Margin="0,20,0,0" />
+
+            <!-- Aperçu du devis -->
+            <Border Style="{StaticResource Card}" Margin="0,22,0,0" Padding="22">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding GarageName}" FontFamily="InterBold" FontSize="19" TextColor="{StaticResource Primary}" />
+                            <Label Text="{Binding GarageAddress}" Style="{StaticResource Caption}" FontSize="12" />
+                        </VerticalStackLayout>
+                        <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.Wrench}" Color="{StaticResource Primary}" Size="26" />
+                    </Grid>
+                    <BoxView Color="{StaticResource Primary}" HeightRequest="2" Margin="0,12,0,14" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding QuoteTitle}" FontFamily="InterBold" FontSize="21" />
+                            <Label Text="{Binding IssuedText}" Style="{StaticResource Caption}" FontSize="12" />
+                        </VerticalStackLayout>
+                        <controls:StatusBadge Grid.Column="1" Status="{Binding BadgeStatus}" VerticalOptions="Start" />
+                    </Grid>
+
+                    <Label Text="{Binding ClientName}" FontFamily="InterSemiBold" Margin="0,16,0,4" />
+                    <Label Text="{Binding ClientAddress}" Style="{StaticResource Caption}" />
+                    <Label Text="{Binding ClientContact}" Style="{StaticResource Caption}" />
+
+                    <HorizontalStackLayout Spacing="14" Margin="0,14,0,6">
+                        <controls:LicensePlate Plate="{Binding Plate}" />
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="{Binding VehicleName}" Style="{StaticResource Caption}" />
+                            <Label Text="{Binding VehicleKm}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Lines}" Margin="0,8,0,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:QuoteLine">
+                                <Grid ColumnDefinitions="*,Auto" Padding="0,10">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Label}" FontFamily="InterSemiBold" />
+                                        <Label Text="{Binding Detail}" Style="{StaticResource Caption}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding TotalText}" FontFamily="InterBold" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="10" Margin="0,12,0,0">
+                        <Label Text="Total HT" FontSize="17" TextColor="{StaticResource Muted}" />
+                        <Label Grid.Column="1" Text="{Binding TotalHt}" FontFamily="InterSemiBold" FontSize="17" />
+                        <Label Grid.Row="1" Text="TVA · 19,25 %" FontSize="17" TextColor="{StaticResource Muted}" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Vat}" FontFamily="InterSemiBold" FontSize="17" />
+                        <BoxView Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource Divider}" />
+                        <Label Grid.Row="3" Text="Total TTC" FontFamily="InterBold" FontSize="17" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                        <Label Grid.Row="3" Grid.Column="1" Text="{Binding TotalTtc}" FontFamily="InterBold" FontSize="36" TextColor="{StaticResource Primary}" />
+                    </Grid>
+
+                    <Label Text="Paiement à la restitution du véhicule. Aucun travail supplémentaire sans accord préalable."
+                           Style="{StaticResource Caption}" FontSize="12" Margin="0,14,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Signature -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,28,0,14">
+                <Label Text="Signature du client" Style="{StaticResource H2}" />
+                <Label Grid.Column="1" Text="Effacer" Style="{StaticResource Link}" VerticalOptions="Center"
+                       IsVisible="{Binding IsValidated, Converter={StaticResource Not}}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnClearSignature" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+
+            <Border BackgroundColor="White" Stroke="{StaticResource Placeholder}" StrokeThickness="1"
+                    StrokeDashArray="4,3" StrokeShape="RoundRectangle 12" HeightRequest="130" Padding="0">
+                <Grid>
+                    <Label Text="Signez ici avec votre doigt" Style="{StaticResource Caption}"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           IsVisible="{Binding HasSignature, Converter={StaticResource Not}}" />
+                    <controls:SignaturePad x:Name="Pad" HasSignature="{Binding HasSignature}" IsLocked="{Binding IsValidated}" />
+                </Grid>
+            </Border>
+            <Label Text="{Binding SignatureCaption}" Style="{StaticResource Caption}" Margin="0,8,0,0" />
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,16,0,0">
+                <CheckBox IsChecked="{Binding Accepted}" VerticalOptions="Start"
+                          IsEnabled="{Binding IsValidated, Converter={StaticResource Not}}" />
+                <Label Grid.Column="1" Text="{Binding AcceptText}" FontSize="15" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleAcceptedCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+
+            <controls:ActionButton Text="Valider le devis signé" Glyph="{x:Static helpers:Icons.Check}"
+                                   Command="{Binding ValidateCommand}" Margin="0,22,0,0" />
+            <controls:ActionButton Kind="Secondary" Text="Exporter en PDF" Glyph="{x:Static helpers:Icons.Download}"
+                                   Command="{Binding ExportPdfCommand}" Margin="0,14,0,0" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="14" Margin="0,14,0,0">
+                <controls:ActionButton Kind="Secondary" Text="Par SMS" Glyph="{x:Static helpers:Icons.Message}"
+                                       Command="{Binding SendSmsCommand}" />
+                <controls:ActionButton Grid.Column="1" Kind="Secondary" Text="Par email" Glyph="{x:Static helpers:Icons.Mail}"
+                                       Command="{Binding SendEmailCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

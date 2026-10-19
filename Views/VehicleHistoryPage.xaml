@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:models="clr-namespace:GarageTrack.Models"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.VehicleHistoryPage"
+             x:DataType="vm:VehicleHistoryViewModel">
+
+    <ContentPage.Resources>
+        <Style x:Key="StepCircle" TargetType="Border">
+            <Setter Property="WidthRequest" Value="34" />
+            <Setter Property="HeightRequest" Value="34" />
+            <Setter Property="StrokeShape" Value="Ellipse" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="StepNumber" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterSemiBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,32">
+
+            <!-- En-tête -->
+            <Grid ColumnDefinitions="Auto,*" HeightRequest="48">
+                <Grid WidthRequest="44" HeightRequest="44" Margin="-10,0,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ArrowLeft}" Color="{StaticResource Primary}" Size="24" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Label Grid.Column="1" Text="SUIVI DU VÉHICULE" Style="{StaticResource Overline}"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Text="Historique &amp; statuts" Style="{StaticResource H1}" Margin="0,14,0,0" />
+            <Label Text="{Binding Subtitle}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+
+            <!-- Plaque -->
+            <Border Style="{StaticResource HeroCard}" Margin="0,22,0,0" Padding="20,22">
+                <VerticalStackLayout Spacing="12">
+                    <controls:LicensePlate IsLarge="True" HorizontalOptions="Center"
+                                           Plate="{Binding Vehicle.Plate}" />
+                    <Label Text="{Binding VehicleLine}" FontSize="15" TextColor="#FBE0E7" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- OR en cours + progression -->
+            <Border Style="{StaticResource Card}" Margin="0,22,0,0" IsVisible="{Binding HasCurrentOrder}">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding CurrentOrder.Number}" FontFamily="InterBold" FontSize="18" VerticalOptions="Center" />
+                        <controls:StatusBadge Grid.Column="1" Status="{Binding CurrentOrder.Status}" />
+                    </Grid>
+
+                    <!-- Timeline horizontale -->
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="34,Auto" Margin="0,18,0,0" RowSpacing="10">
+                        <!-- Connecteurs -->
+                        <BoxView Grid.ColumnSpan="2" HeightRequest="3" Color="{StaticResource Primary}" VerticalOptions="Center"
+                                 IsVisible="{Binding Step1Line}" />
+                        <BoxView Grid.ColumnSpan="2" HeightRequest="3" Color="{StaticResource Border}" VerticalOptions="Center"
+                                 IsVisible="{Binding Step1LineOff}" />
+                        <BoxView Grid.Column="1" Grid.ColumnSpan="2" HeightRequest="3" Color="{StaticResource Primary}" VerticalOptions="Center"
+                                 IsVisible="{Binding Step2Line}" />
+                        <BoxView Grid.Column="1" Grid.ColumnSpan="2" HeightRequest="3" Color="{StaticResource Border}" VerticalOptions="Center"
+                                 IsVisible="{Binding Step2LineOff}" />
+
+                        <!-- Étape 1 -->
+                        <Border Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Success}" IsVisible="{Binding Step1Done}" HorizontalOptions="Start">
+                            <controls:Icon Glyph="{x:Static helpers:Icons.Check}" Color="White" Size="18" />
+                        </Border>
+                        <Border Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Primary}" IsVisible="{Binding Step1Pending}" HorizontalOptions="Start">
+                            <Label Text="1" Style="{StaticResource StepNumber}" TextColor="White" />
+                        </Border>
+
+                        <!-- Étape 2 -->
+                        <Border Grid.Column="1" Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Success}" IsVisible="{Binding Step2Done}">
+                            <controls:Icon Glyph="{x:Static helpers:Icons.Check}" Color="White" Size="18" />
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Primary}" IsVisible="{Binding Step2Active}">
+                            <Label Text="2" Style="{StaticResource StepNumber}" TextColor="White" />
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Border}" IsVisible="{Binding Step2Pending}">
+                            <Label Text="2" Style="{StaticResource StepNumber}" TextColor="{StaticResource Muted}" />
+                        </Border>
+
+                        <!-- Étape 3 -->
+                        <Border Grid.Column="2" Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Success}" IsVisible="{Binding Step3Active}" HorizontalOptions="End">
+                            <controls:Icon Glyph="{x:Static helpers:Icons.Check}" Color="White" Size="18" />
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource StepCircle}" BackgroundColor="{StaticResource Border}" IsVisible="{Binding Step3Pending}" HorizontalOptions="End">
+                            <Label Text="3" Style="{StaticResource StepNumber}" TextColor="{StaticResource Muted}" />
+                        </Border>
+
+                        <Label Grid.Row="1" Text="Réceptionné" Style="{StaticResource Caption}" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="En réparation" Style="{StaticResource Caption}" HorizontalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Step2Active}" Value="True">
+                                    <Setter Property="FontFamily" Value="InterBold" />
+                                    <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Grid.Row="1" Grid.Column="2" Text="Terminé" Style="{StaticResource Caption}" HorizontalOptions="End" />
+                    </Grid>
+
+                    <BoxView Style="{StaticResource Divider}" Margin="0,16" />
+
+                    <Label Text="{Binding CurrentTitle}" FontFamily="InterSemiBold" />
+                    <Label Text="{Binding ReceptionText}" Style="{StaticResource Caption}" Margin="0,12,0,0" />
+                    <Label Text="{Binding QuoteText}" Style="{StaticResource Caption}" />
+                    <Label Text="{Binding ReturnText}" FontSize="14" TextColor="{StaticResource Primary}" Margin="0,12,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Interventions passées -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,30,0,18">
+                <Label Text="Interventions passées" Style="{StaticResource H2}" />
+                <Label Grid.Column="1" Text="{Binding InterventionsCount}" Style="{StaticResource Link}" FontSize="14" VerticalOptions="Center" />
+            </Grid>
+
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Interventions}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:Intervention">
+                        <Grid ColumnDefinitions="22,*" ColumnSpacing="12">
+                            <!-- Ligne verticale + point -->
+                            <BoxView WidthRequest="2" Color="{StaticResource Border}" HorizontalOptions="Center" Margin="0,14,0,0" />
+                            <Ellipse WidthRequest="12" HeightRequest="12" Stroke="{StaticResource PrimaryBrush}" StrokeThickness="2.5"
+                                     Fill="{StaticResource CardBrush}" VerticalOptions="Start" HorizontalOptions="Center" Margin="0,4,0,0" />
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="10" Padding="0,0,0,20">
+                                <Label Text="{Binding DateText}" FontFamily="InterSemiBold" TextColor="{StaticResource Primary}" />
+                                <Border Style="{StaticResource Card}" Padding="18">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding Title}" FontFamily="InterSemiBold" FontSize="16" VerticalOptions="Center" />
+                                            <controls:StatusBadge Grid.Column="1" Status="Done" />
+                                        </Grid>
+                                        <Label Text="{Binding Reference}" Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding Description}" FontSize="14" />
+                                        <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                                            <Label Text="{Binding TotalText}" FontFamily="InterBold" FontSize="17" />
+                                            <HorizontalStackLayout Grid.Column="1" Spacing="6" Padding="6">
+                                                <Label Text="Facture" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                                                <controls:Icon Glyph="{x:Static helpers:Icons.FileText}" Color="{StaticResource Primary}" Size="18" />
+                                                <HorizontalStackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnInvoiceTapped" />
+                                                </HorizontalStackLayout.GestureRecognizers>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <!-- État vide -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasHistory, Converter={StaticResource Not}}">
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.History}" Color="{StaticResource Muted}" Size="28" />
+                    <Label Text="Aucun historique" FontFamily="InterSemiBold" HorizontalTextAlignment="Center" />
+                    <Label Text="Les interventions apparaîtront ici dès la réception du véhicule." Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <controls:ActionButton Kind="Secondary" Text="Exporter l’historique en PDF" Glyph="{x:Static helpers:Icons.Download}"
+                                   Command="{Binding ExportPdfCommand}" Margin="0,8,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

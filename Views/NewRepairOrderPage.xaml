@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GarageTrack.Controls"
+             xmlns:helpers="clr-namespace:GarageTrack.Helpers"
+             xmlns:models="clr-namespace:GarageTrack.Models"
+             xmlns:vm="clr-namespace:GarageTrack.ViewModels"
+             x:Class="GarageTrack.Views.NewRepairOrderPage"
+             x:DataType="vm:NewRepairOrderViewModel"
+             Shell.TabBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,32">
+
+            <!-- En-tête -->
+            <Grid ColumnDefinitions="Auto,*" HeightRequest="48">
+                <Grid WidthRequest="44" HeightRequest="44" Margin="-10,0,0,0">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ArrowLeft}" Color="{StaticResource Primary}" Size="24" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+                <Label Grid.Column="1" Text="INTERVENTION · 1 / 3" Style="{StaticResource Overline}"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Text="Nouvel ordre de réparation" Style="{StaticResource H1}" Margin="0,14,0,0" />
+            <Label Text="{Binding HeaderText}" Style="{StaticResource Subtitle}" Margin="0,8,0,0" />
+            <controls:StepProgress CurrentStep="1" Margin="0,20,0,4" />
+
+            <!-- Client -->
+            <Label Text="Client *" Style="{StaticResource FieldLabel}" />
+            <Border Style="{StaticResource Field}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Picker Title="Choisir un client" ItemsSource="{Binding Clients}"
+                            SelectedItem="{Binding SelectedClient}" />
+                    <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.ChevronDown}" Color="{StaticResource Muted}" Size="22" />
+                </Grid>
+            </Border>
+
+            <!-- Véhicule : plaque + modèle -->
+            <Label Text="Véhicule *" Style="{StaticResource FieldLabel}" />
+            <Border Style="{StaticResource Field}" Padding="16,12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasVehicle}">
+                        <controls:LicensePlate Plate="{Binding SelectedVehicle.Plate}" />
+                        <Label Text="{Binding SelectedVehicle.NameWithEngine}" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                    <Label Text="Choisir un véhicule" TextColor="{StaticResource Placeholder}" FontSize="16"
+                           VerticalOptions="Center" IsVisible="{Binding HasVehicle, Converter={StaticResource Not}}" />
+                    <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.ChevronDown}" Color="{StaticResource Muted}" Size="22" />
+                </Grid>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ChooseVehicleCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <!-- Kilométrage -->
+            <Label Text="Kilométrage d’entrée *" Style="{StaticResource FieldLabel}" />
+            <Border Style="{StaticResource Field}">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+                    <Entry Text="{Binding Mileage}" Keyboard="Numeric" Placeholder="124 850" />
+                    <Label Grid.Column="1" Text="km" FontSize="16" VerticalOptions="Center" />
+                    <controls:Icon Grid.Column="2" Glyph="{x:Static helpers:Icons.Gauge}" Color="{StaticResource Muted}" Size="22" Margin="10,0,0,0" />
+                </Grid>
+            </Border>
+            <Label Text="{Binding LastReadingText}" Style="{StaticResource Caption}" Margin="0,8,0,0" />
+
+            <!-- Symptômes -->
+            <Label Text="Symptômes signalés *" Style="{StaticResource FieldLabel}" />
+            <Border Style="{StaticResource Field}" Padding="12,6">
+                <Editor Text="{Binding Symptoms}" AutoSize="TextChanges" MinimumHeightRequest="80"
+                        Placeholder="Décrivez ce que le client a constaté…" />
+            </Border>
+
+            <!-- Checklist -->
+            <Label Text="Checklist des travaux" Style="{StaticResource H2}" Margin="0,26,0,12" />
+            <Border Style="{StaticResource Card}" Padding="14,6">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Tasks}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:TaskItem">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" MinimumHeightRequest="56">
+                                <CheckBox IsChecked="{Binding IsChecked}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding Name}" FontSize="16" VerticalOptions="Center">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnTaskTapped" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Mécanicien -->
+            <Label Text="Mécanicien attribué *" Style="{StaticResource FieldLabel}" Margin="0,22,0,8" />
+            <Border Style="{StaticResource Field}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Picker Title="Choisir un mécanicien" ItemsSource="{Binding Mechanics}" SelectedItem="{Binding SelectedMechanic}" />
+                    <controls:Icon Grid.Column="1" Glyph="{x:Static helpers:Icons.ChevronDown}" Color="{StaticResource Muted}" Size="22" />
+                </Grid>
+            </Border>
+
+            <!-- Information -->
+            <Border Style="{StaticResource SoftCard}" Margin="0,22,0,0">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <controls:Icon Glyph="{x:Static helpers:Icons.ShieldCheck}" Color="{StaticResource Primary}" Size="22" VerticalOptions="Start" />
+                    <Label Grid.Column="1" Text="Les travaux seront lancés après validation du devis par le client."
+                           FontSize="14" TextColor="{StaticResource Primary}" />
+                </Grid>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource ErrorText}" FontSize="14"
+                   Margin="0,14,0,0" IsVisible="{Binding ErrorMessage, Converter={StaticResource NotEmpty}}" />
+
+            <controls:ActionButton Kind="Secondary" Text="Enregistrer l’OR" Glyph="{x:Static helpers:Icons.Save}"
+                                   Command="{Binding SaveOrderCommand}" Margin="0,20,0,0" />
+            <controls:ActionButton Text="Générer le devis" Glyph="{x:Static helpers:Icons.ArrowRight}"
+                                   Command="{Binding GenerateQuoteCommand}" Margin="0,14,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

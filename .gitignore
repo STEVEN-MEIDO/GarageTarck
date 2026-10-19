@@ -1,0 +1,12 @@
+# Sorties de build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Divers
+.DS_Store
+Thumbs.db
